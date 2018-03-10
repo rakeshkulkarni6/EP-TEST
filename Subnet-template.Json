@@ -30,6 +30,9 @@
             "location":"[resourcegroup().location]",
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "name": "[concat(parameters('VnetName'),'/',parameters('PrivateSubnetName'))]",
+            "dependsOn": [
+                 "[resourceId('Microsoft.Network/routeTables',parameters('PrivaterouteTableName'))]"
+            ],
             "properties":{
                 "addressPrefix":"[parameters('PrivateSubnetAddressPrefix')]",
                 "RouteTabel":"[resourceId('Microsoft.Network/routeTables',parameters('PrivaterouteTableName'))]"
@@ -40,6 +43,9 @@
             "location":"[resourcegroup().location]",
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "name": "[concat(parameters('VnetName'),'/',parameters('publicSubnetName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"
+            ],
             "properties":{
                 "addressPrefix":"[parameters('publicSubnetAddressPrefix')]",
                 "RouteTable":"[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"
