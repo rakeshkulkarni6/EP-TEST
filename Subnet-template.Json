@@ -35,7 +35,8 @@
             ],
             "properties":{
                 "addressPrefix":"[parameters('PrivateSubnetAddressPrefix')]",
-                "RouteTabel":"[resourceId('Microsoft.Network/routeTables',parameters('PrivaterouteTableName'))]"
+                "RouteTabel":{
+                    "id":"[resourceId('Microsoft.Network/routeTables',parameters('PrivaterouteTableName'))]"}
             }
         },
         {
@@ -48,7 +49,8 @@
             ],
             "properties":{
                 "addressPrefix":"[parameters('publicSubnetAddressPrefix')]",
-                "RouteTable":"[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"
+                "RouteTable":{
+                    "id":"[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"}
             } 
         },
         {
