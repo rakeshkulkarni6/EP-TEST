@@ -42,7 +42,7 @@
             "name": "[concat(parameters('VnetName'),'/',parameters('publicSubnetName'))]",
             "properties":{
                 "addressPrefix":"[parameters('publicSubnetAddressPrefix')]",
-                "routeTable":"[resourceId('Microsoft.Network/routeTables',parameters('PrivaterouteTableName'))]"
+                "routeTable":"[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"
             } 
         },
         {
@@ -79,7 +79,7 @@
                                 }
                             },
                             {   
-                                "Name":"Internal",
+                                "Name":"Internet-Route",
                                 "properties": {
                                 "addressPrefix": "0.0.0.0/0",
                                 "nextHopType": "Internet",
