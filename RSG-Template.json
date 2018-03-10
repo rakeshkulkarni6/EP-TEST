@@ -1,0 +1,20 @@
+{
+ "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName":{
+      "type": "string"
+    },
+    "location":{
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2014-01-01",
+      "type": "Microsoft.Compute/ResourceGroup",
+      "name": "[parameters('resourceGroupName')]",
+      "location":"[parameters('location')]"
+    }
+  ]
+}

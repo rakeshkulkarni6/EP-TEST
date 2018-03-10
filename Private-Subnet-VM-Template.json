@@ -1,0 +1,123 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "AdminUserName":{
+          "type": "string"
+      },
+      "AdminPassword":{
+          "type": "securestring"
+      },
+      "vnetname":{
+          "type": "string"
+      },
+      "subnetname":{
+          "type": "string"
+      },
+      "VmName":{
+          "type": "string"
+      },
+      "ImagePublisherName":{
+          "type":"string"
+      },
+     "ImageOffer":{
+          "type": "string"
+      },
+      "OsVersion":{
+          "type": "string"
+        },
+	  "Buildversion":{
+          "type": "string"
+      },
+	  "privateIPAddress":{
+	  "type":"string"
+	  },
+      "VmSize":{
+          "type": "string"
+      },
+      "LoadbalancerName":{
+          "type": "string"
+      }
+  },
+  "variables": {
+       "VNetID":"[resourceId('Microsoft.Network/VirtualNetworks/',parameters('VnetName'))]",
+      "SubnetRef":"[concat(variables('VnetID'),'/','subnets','/',parameters('SubnetName'))]",
+      "NicName":"[concat(parameters('VmName'),copyindex(1),'-NIC0')]",
+      "privateIP":{
+	"network":"[split(parameters('privateIPAddress'),'.')[0]]",
+	"subnet":"[split(parameters('privateIPAddress'),'.')[1]]",
+	"mask":"[split(parameters('privateIPAddress'),'.')[2]]"
+	},
+    "node":"[int(split(parameters('privateIPAddress'),'.')[3])]",
+    "privateIPAddress":"[concat(variables('privateIP').network,'.',variables('privateIP').subnet,'.',variables('privateIP').mask,'.')]"
+  },
+  "resources": [
+{
+        "apiVersion": "2017-12-01",
+        "location": "[resourceGroup().location]",
+        "type": "Microsoft.Network/networkInterfaces",
+		"copy": {
+		"name": "niccopy",
+		"count": "2"
+		},
+        "name":"[concat(variables('NICName'),copyindex(1))]",
+	    "properties":{
+		"ipConfigurations":[
+                {
+                "name":"[concat(variables('NICName'),'-IP')]",
+                "properties":{
+                    "privateIPAllocationMethod":"static",
+                    "privateIPAddress":"[concat(variables('privateIPAddress'),copyindex(variables('node')))]",
+                    "privateIPAddressVersion":"IPv4",
+                    "subnet":{
+                    "id":"[variables('SubnetRef')]"
+                },
+                "loadBalancerBackendAddressPools":"[variables('LoadbalancerSelection')[parameters('attachLoadBalancer')]]"
+                }
+                }
+		]
+		}
+	},
+    	{  
+            "apiVersion": "2017-12-01",
+            "name": "[concat(parameters('VmName'),copyindex(1))]",
+            "type":  "Microsoft.Compute/virtualMachines",
+            "location":"[resourceGroup().location]",
+            "copy": {
+                    "name": "niccopy",
+                    "count": "2"
+                    },
+            "properties":{
+			  "hardwareProfile":{
+              "VmSize":"[parameters('VmSize')]"
+          },
+              "storageProfile":{
+              "ImageReference":{
+                  "Publisher":"[Parameters('ImagePublisherName')]",
+                  "offer":"[parameters('ImageOffer')]",
+                  "sku":"[parameters('OsVersion')]",
+                  "version":"[parameters('Buildversion')]"
+              },
+              "osDisk":{
+                  "name":"[concat(parameters('VmName'),'-osdisk')]",
+				  "caching":"ReadWrite",
+                  "CreateOption":"FromImage"
+              }
+          },
+          "osProfile":{
+              "ComputerName":"[parameters('VmName')]",
+              "AdminUserName":"[parameters('AdminUserName')]",
+              "AdminPassword":"[Parameters('AdminPassword')]"
+          },
+          "networkProfile":{
+               "NetworkInterfaces":"[concat(resourceId('Microsoft.Network/networkInterfaces',variables('nicName')))]"
+          },
+		   "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true"
+          }
+      }
+		}
+        }
+  ]
+}

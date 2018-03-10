@@ -1,0 +1,87 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "PrivateSubnetName":{
+            "type": "string"
+        },
+        "PrivateSubnetAddressPrefix":{
+            "type": "string"
+        },
+        "publicSubnetName":{
+            "type": "string"
+        },
+        "publicSubnetAddressPrefix":{
+            "type": "string"
+        },
+        "VnetName":{
+            "type": "string"
+        },
+        "PrivaterouteTableName":{
+            "type": "string"
+        },
+        "PublicrouteTableName":{
+            "type": "string"
+        }
+    },
+"resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "location":"[resourcegroup().location]",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('VnetName'),'/',parameters('PrivateSubnetName'))]",
+            "properties":{
+                "addressPrefix":"[parameters('PrivateSubnetAddressPrefix')]",
+                    "routeTable": {
+                        "name": "[parameters('PrivaterouteTableName')]",
+                        "location": "[resourceGroup().location]",
+                        "properties": {
+                            "routes": [
+                            {   
+                                "Name":"Internal",
+                                "properties": {
+                                "addressPrefix": "10.0.1.0/24",
+                                "nextHopType": "VirtualNetwork",
+                                "nextHopIpAddress": ""
+                                }
+                            }
+                            ]
+                        }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "location":"[resourcegroup().location]",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('VnetName'),'/',parameters('publicSubnetName'))]",
+            "properties":{
+                "addressPrefix":"[parameters('publicSubnetAddressPrefix')]",
+                        "routeTable": {
+                        "name": "[parameters('PublicrouteTableName')]",
+                        "location": "[resourceGroup().location]",
+                        "properties": {
+                            "routes": [
+                            {   
+                                "Name":"Internal",
+                                "properties": {
+                                "addressPrefix": "10.0.1.0/24",
+                                "nextHopType": "VirtualNetwork",
+                                "nextHopIpAddress": ""
+                                }
+                            },
+                            {   
+                                "Name":"Internal",
+                                "properties": {
+                                "addressPrefix": "0.0.0.0/0",
+                                "nextHopType": "Internet",
+                                "nextHopIpAddress": ""
+                                }
+                            }
+                            ]
+                        }
+                }
+            } 
+        }
+    ]
+}
