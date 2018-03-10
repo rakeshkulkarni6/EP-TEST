@@ -42,7 +42,7 @@
             "name": "[concat(parameters('VnetName'),'/',parameters('publicSubnetName'))]",
             "properties":{
                 "addressPrefix":"[parameters('publicSubnetAddressPrefix')]",
-                "routeTable":"[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"
+                "RouteTable":"[resourceId('Microsoft.Network/routeTables',parameters('PublicrouteTableName'))]"
             } 
         },
         {
